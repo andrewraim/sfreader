@@ -2,6 +2,9 @@
 
 export(Accumulator)
 export(aiansf2010_reader)
+export(demo2010_dhc_download)
+export(demo2010_pl94_download)
+export(demo2010_states)
 export(logger)
 export(printf)
 import(dplyr)
