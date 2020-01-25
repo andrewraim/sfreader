@@ -10,9 +10,11 @@ if (FALSE) {
 	demo2010sf_dhc_download(state_names, dest_dir, base_url = NULL)
 }
 
-### TBD: Should the PL94 and DHC products each get their own reader???
-reader = demosf2010_reader$new("~/Documents/datasets/demosf2010/")
+# The PL94 and DHC products each get their own reader
+reader = demosf2010_dhc_reader$new("~/Documents/datasets/demosf2010/dhc/")
+
 reader$getTableNames()
 reader$getSummaryLevels()
 reader$getIterations()
 reader$getDataDictionary()
+

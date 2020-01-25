@@ -1,6 +1,7 @@
 #' @export
 demo2010sf_dhc_download = function(state_names, dest_dir, base_url = NULL)
 {
+	logger("Downloading 2010 Demonstration Summary File for DHC\n")
 	if (!dir.exists(dest_dir)) {
 		stop("specified dest_dir does not exist")
 	}
@@ -20,6 +21,8 @@ demo2010sf_dhc_download = function(state_names, dest_dir, base_url = NULL)
 	}
 
 	for (l in 1:L) {
+		logger("Downloading files for state %s\n", dat$name[l])
+
 		dest_subdir = sprintf("%s/%s", dest_dir, dat$name[l])
 		if (dir.exists(dest_subdir)) {
 			logger("Directory %s exists. Skipping...\n", dest_subdir)
@@ -31,11 +34,24 @@ demo2010sf_dhc_download = function(state_names, dest_dir, base_url = NULL)
 		download.file(url, destfile)
 		unzip(destfile, exdir = dest_subdir)
 	}
+
+	logger("Done\n")
+}
+
+#' @export
+demo2010sf_crosswalk_download = function(dest_dir, base_url = NULL)
+{
+	logger("Downloading crosswalk file for 2010 Demonstration Summary File\n")
+	url = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", base_url)
+	destfile = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", dest_dir)
+	download.file(url, destfile)
+	logger("Done\n")
 }
 
 #' @export
 demo2010sf_pl94_download = function(state_names, dest_dir, base_url = NULL)
 {
+	logger("Downloading 2010 Demonstration Summary File for PL94\n")
 	if (!dir.exists(dest_dir)) {
 		stop("sppecified dest_dir does not exist")
 	}
@@ -55,6 +71,8 @@ demo2010sf_pl94_download = function(state_names, dest_dir, base_url = NULL)
 	}
 
 	for (l in 1:L) {
+		logger("Downloading files for state %s\n", dat$name[l])
+
 		dest_subdir = sprintf("%s/%s", dest_dir, dat$name[l])
 		if (dir.exists(dest_subdir)) {
 			logger("Directory %s exists. Skipping...\n", dest_subdir)
@@ -66,4 +84,6 @@ demo2010sf_pl94_download = function(state_names, dest_dir, base_url = NULL)
 		download.file(url, destfile)
 		unzip(destfile, exdir = dest_subdir)
 	}
+
+	logger("Done\n")
 }
