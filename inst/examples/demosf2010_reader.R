@@ -1,20 +1,21 @@
 library(sfreader)
 
+dhc_dest_dir = "~/Documents/datasets/demo_2010_us/dhc"
+pl94_dest_dir = "~/Documents/datasets/demo_2010_us/pl94"
+
 if (FALSE) {
-	state_names = c("Maryland", "Oklahoma")
-
-	dest_dir = "~/Documents/datasets/demosf2010/dhc/"
-	demo2010sf_dhc_download(state_names, dest_dir, base_url = NULL)
-
-	dest_dir = "~/Documents/datasets/demosf2010/pl94/"
-	demo2010sf_dhc_download(state_names, dest_dir, base_url = NULL)
+	dat = demosf2010_states %>%
+		filter(abbreviation %in% c("ok", "ri", "md"))
+	demosf2010_dhc_download(dat$name, dhc_dest_dir)
+	demosf2010_dhc_download(dat$name, pl94_dest_dir)
 }
 
 # The PL94 and DHC products each get their own reader
-reader = demosf2010_dhc_reader$new("~/Documents/datasets/demosf2010/dhc/")
+reader = demosf2010_dhc_reader$new(dhc_dest_dir)
 
 reader$getTableNames()
 reader$getSummaryLevels()
-reader$getIterations()
 reader$getDataDictionary()
 
+p3_040_ri = reader$getTable(table_name = "P1", state_name = "National", sumlev = "020")
+print(p3_040_ri)

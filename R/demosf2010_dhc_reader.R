@@ -61,21 +61,20 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 			logger("Finished initializing reader\n")
 		},
 		getTableNames = function() {
-			return(demosf2010_tables)
+			return(demosf2010_dhc_tables)
 		},
 		getSummaryLevels = function() {
 			return(demosf2010_geo_cols)
 		},
-		getIterations = function() {
-			return(demosf2010_iterations)
-		},
 		getDataDictionary = function() {
 			return(demosf2010_geoheader_dd)
 		},
-		getTable = function(table_name, sumlev, iteration, transform_colnames = FALSE) {
-			stopifnot(sumlev %in% names(aiansf2010_geo_cols))
+		getTable = function(table_name, state_name, sumlev, transform_colnames = FALSE) {
+			stopifnot(sumlev %in% names(demosf2010_geo_cols))
 
-			target_segment = demosf2010_tables %>%
+			target_chariter = "000"
+
+			target_segment = demosf2010_dhc_segments %>%
 				filter(NUMBER == table_name) %>%
 				select(SEGMENT) %>%
 				as.integer()
@@ -83,44 +82,70 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 				stop("Could not locate specified table")
 			}
 
-			table_dd = aiansf2010_geoheader_dd %>%
-				filter(`TABLE NUMBER` == table_name) %>%
-				filter(`FIELD CODE` != "") %>%
-				arrange(SORTID)
-
-			target_chariter = iteration
-			target_geo = private$usgeo[[sumlev]] %>%
-				select(-FILEID, -STUSAB, -SUMLEV, -GEOCOMP, -CHARITER, -CIFSN)
+			state_dat = demosf2010_states %>%
+				filter(name == state_name)
+			if (nrow(state_dat) == 0) {
+				stop("Do not recognize specified state")
+			}
 
 			dat_file = list.files(
 				path = private$path_to_files,
-				pattern = sprintf("us%s%02d", target_chariter, target_segment),
-				full.names = TRUE)
+				pattern = sprintf("%s%s%02d", state_dat$abbreviation, target_chariter, target_segment),
+				full.names = TRUE, recursive = TRUE)
+			if (length(dat_file) == 0) {
+				stop("Could not locate data for specified state")
+			}
 
-			cn_dat = sprintf("aiansf2010_segment%02d", target_segment)
-			cn = colnames(get(cn_dat))
-			dat = read_csv(dat_file, col_names = cn) %>%
-				select(LOGRECNO, table_dd$`FIELD CODE`)
+			dat = read_csv(file = dat_file, col_names = FALSE)
+
+			dat_segment = demosf2010_dhc_segments %>%
+				arrange(ORDERID) %>%
+				filter(SEGMENT == target_segment) %>%
+				mutate(start_pos = cumsum(NCOLS)) %>%
+				filter(NUMBER == table_name)
+
+			start_col = dat_segment$start_pos
+			end_col = dat_segment$start_pos + dat_segment$NCOLS
+			idx_cols = seq(start_col, end_col)
+
+			# Try to reconstuct column names
+			if (startsWith(table_name, "PCT")) {
+				prefix = "PCT"
+				num = substr(table_name, 4, nchar(table_name))
+			} else if (startsWith(table_name, "PCO")) {
+				prefix = "PCO"
+				num = substr(table_name, 4, nchar(table_name))
+			} else if (startsWith(table_name, "P")) {
+				prefix = "P"
+				num = substr(table_name, 2, nchar(table_name))
+			} else if (startsWith(table_name, "H")) {
+				prefix = "H"
+				num = substr(table_name, 2, nchar(table_name))
+			} else {
+				stop("Don't know how to handle table name")
+			}
+
+			if (str_ends(num, "[0-9]+")) {
+				num = paste0(num, "0")
+			}
+			padded_num = str_pad(num, 4, "left", pad = "0")
+			cn = c("LOGRECNO",
+				sprintf("%s%s%04d", prefix, padded_num, seq_along(idx_cols)))
+			dat_table = dat[,c(5, idx_cols)]
+			colnames(dat_table) = cn
+
+			target_geo = private$usgeo[[sumlev]] %>%
+				select(-FILEID, -STUSAB, -SUMLEV, -GEOCOMP, -CHARITER, -CIFSN)
 
 			result = target_geo %>%
-				inner_join(dat, by = c("LOGRECNO" = "LOGRECNO"))
+				inner_join(dat_table, by = c("LOGRECNO" = "LOGRECNO"))
 
 			if (transform_colnames) {
-				# This seems a little fragile, the indentations and colons in the
-				# column names seem to coorrespond to logical hierarchical names.
-				# Try to convert them so that each column name is interpretable on
-				# its own.
-				#
-				# It looks like there are five spaces used to indent at each level.
-				table_dd = table_dd %>%
-					mutate(cn_xform = transform_col_names(table_dd$`FIELD NAME`, 5))
-
-				dat_colnames = data.frame(col = colnames(result)) %>%
-					mutate(col = as.character(col)) %>%
-					left_join(table_dd, c("col" = "FIELD CODE")) %>%
-					mutate(cn_xform = ifelse(!is.na(cn_xform), cn_xform, col))
-
-				colnames(result) = dat_colnames$cn_xform
+				stop("TBD: Need to implement transformed colnames")
+				dat_names = demosf2010_dhc_dd %>%
+					filter(NUMBER == table_name) %>%
+					filter(!is.na(CELL_COUNT)) %>%
+					mutate(DESC = paste(DESC1, DESC2, DESC3, DESC4, DESC5, DESC6, DESC7, sep = " "))
 			}
 
 			return(result)
