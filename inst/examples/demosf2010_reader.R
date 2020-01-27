@@ -5,9 +5,13 @@ pl94_dest_dir = "~/Documents/datasets/demo_2010_us/pl94"
 
 if (FALSE) {
 	dat = demosf2010_states %>%
-		filter(abbreviation %in% c("ok", "ri", "md"))
+		filter(abbreviation %in% c("ok", "ri", "md", ""))
+
+	dat = demosf2010_states %>%
+		filter(abbreviation %in% c("us"))
+
 	demosf2010_dhc_download(dat$name, dhc_dest_dir)
-	demosf2010_dhc_download(dat$name, pl94_dest_dir)
+	demosf2010_pl94_download(dat$name, pl94_dest_dir)
 }
 
 # The PL94 and DHC products each get their own reader
@@ -17,5 +21,5 @@ reader$getTableNames()
 reader$getSummaryLevels()
 reader$getDataDictionary()
 
-p3_040_ri = reader$getTable(table_name = "P1", state_name = "National", sumlev = "020")
+p3_040_ri = reader$getTable(table_name = "P1", state_name = "Maryland", sumlev = "020")
 print(p3_040_ri)
