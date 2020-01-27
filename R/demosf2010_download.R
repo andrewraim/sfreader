@@ -1,5 +1,5 @@
 #' @export
-demo2010sf_dhc_download = function(state_names, dest_dir, base_url = NULL)
+demosf2010_dhc_download = function(state_names, dest_dir, base_url = NULL)
 {
 	logger("Downloading 2010 Demonstration Summary File for DHC\n")
 	if (!dir.exists(dest_dir)) {
@@ -39,9 +39,15 @@ demo2010sf_dhc_download = function(state_names, dest_dir, base_url = NULL)
 }
 
 #' @export
-demo2010sf_crosswalk_download = function(dest_dir, base_url = NULL)
+demosf2010_crosswalk_download = function(dest_dir, base_url = NULL)
 {
 	logger("Downloading crosswalk file for 2010 Demonstration Summary File\n")
+	if (is.null(base_url)) {
+		base_url = paste("https://www2.census.gov", "programs-surveys",
+			"decennial", "2020", "program-management", "data-product-planning",
+			"2010-demonstration-data-products", sep = "/")
+	}
+
 	url = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", base_url)
 	destfile = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", dest_dir)
 	download.file(url, destfile)
@@ -49,7 +55,7 @@ demo2010sf_crosswalk_download = function(dest_dir, base_url = NULL)
 }
 
 #' @export
-demo2010sf_pl94_download = function(state_names, dest_dir, base_url = NULL)
+demosf2010_pl94_download = function(state_names, dest_dir, base_url = NULL)
 {
 	logger("Downloading 2010 Demonstration Summary File for PL94\n")
 	if (!dir.exists(dest_dir)) {

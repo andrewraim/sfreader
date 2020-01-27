@@ -1,4 +1,5 @@
 library(tibble)
+library(readr)
 library(readxl)
 library(dplyr)
 library(stringr)
@@ -35,7 +36,7 @@ demosf2010_states = tribble(
 	"Missouri", "mo",
 	"Montana", "mt",
 	"National", "us",
-	"Nebraska", "nb",
+	"Nebraska", "ne",
 	"Nevada", "nv",
 	"New_Hampshire", "nh",
 	"New_Jersey", "nj",
@@ -88,11 +89,13 @@ demosf2010_geo_cols = list(
 dest_file = sprintf("%s/%s.rda", dest_path, "demosf2010_geo_cols")
 save(demosf2010_geo_cols, file = dest_file)
 
-cols = read_xlsx("~/Documents/datasets/demosf2010/2020-census-data-products-planning-crosswalk.xlsx", sheet = "DHC Tables", skip = 1, n_max = 1, col_names = FALSE)
+# cols = read_xlsx("~/Documents/datasets/demosf2010/2020-census-data-products-planning-crosswalk.xlsx", sheet = "DHC Tables", skip = 1, n_max = 1, col_names = FALSE)
+cols = read_xlsx("~/datasets/demo_2010_us/2020-census-data-products-planning-crosswalk.xlsx", sheet = "DHC Tables", skip = 1, n_max = 1, col_names = FALSE)
 col_names = c("NUMBER", "CELL_COUNT", "INDENT", sprintf("DESC%d", 1:7))
 col_types = c("text", "numeric", "numeric", rep("text", 7))
 demosf2010_dhc_dd =
-	read_xlsx("~/Documents/datasets/demosf2010/2020-census-data-products-planning-crosswalk.xlsx",
+	# read_xlsx("~/Documents/datasets/demosf2010/2020-census-data-products-planning-crosswalk.xlsx",
+	read_xlsx("~/datasets/demo_2010_us/2020-census-data-products-planning-crosswalk.xlsx",
 		sheet = "DHC Tables", skip = 3, col_names = col_names, col_types = col_types) %>%
 	filter(!is.na(NUMBER))
 dest_file = sprintf("%s/%s.rda", dest_path, "demosf2010_dhc_dd")
