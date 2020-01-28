@@ -5,6 +5,8 @@
 # @useDynLib sfreader, .registration = TRUE
 #' @import dplyr
 #' @import readr
+#' @import RSQLite
+#' @import stringr
 # @importFrom stats dgamma dnorm logLik optim rgamma rnorm runif quantile sd
 #' @importFrom R6 R6Class
 # @importFrom Rcpp evalCpp

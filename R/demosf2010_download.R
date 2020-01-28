@@ -1,4 +1,20 @@
 #' @export
+demosf2010_crosswalk_download = function(dest_dir, base_url = NULL)
+{
+	logger("Downloading crosswalk file for 2010 Demonstration Summary File\n")
+	if (is.null(base_url)) {
+		base_url = paste("https://www2.census.gov", "programs-surveys",
+			"decennial", "2020", "program-management", "data-product-planning",
+			"2010-demonstration-data-products", sep = "/")
+	}
+
+	url = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", base_url)
+	destfile = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", dest_dir)
+	download.file(url, destfile)
+	logger("Done\n")
+}
+
+#' @export
 demosf2010_dhc_download = function(state_names, dest_dir, base_url = NULL)
 {
 	logger("Downloading 2010 Demonstration Summary File for DHC\n")
@@ -35,22 +51,6 @@ demosf2010_dhc_download = function(state_names, dest_dir, base_url = NULL)
 		unzip(destfile, exdir = dest_subdir)
 	}
 
-	logger("Done\n")
-}
-
-#' @export
-demosf2010_crosswalk_download = function(dest_dir, base_url = NULL)
-{
-	logger("Downloading crosswalk file for 2010 Demonstration Summary File\n")
-	if (is.null(base_url)) {
-		base_url = paste("https://www2.census.gov", "programs-surveys",
-			"decennial", "2020", "program-management", "data-product-planning",
-			"2010-demonstration-data-products", sep = "/")
-	}
-
-	url = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", base_url)
-	destfile = sprintf("%s/2020-census-data-products-planning-crosswalk.xlsx", dest_dir)
-	download.file(url, destfile)
 	logger("Done\n")
 }
 
