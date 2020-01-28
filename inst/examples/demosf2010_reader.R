@@ -21,24 +21,30 @@ reader$getTableNames()
 reader$getSummaryLevels()
 reader$getDataDictionary()
 
-p3_040_ri = reader$getTable(table_name = "P1", state_name = "Maryland", sumlev = "020")
-print(p3_040_ri)
-
-make_sqlite_demosf2010_dhc(
-	path_to_files = "~/datasets/demo_2010_us/dhc/",
-	outfile = "demosf2010_dhc.sqlite",
+sqlite_file = "demosf2010_dhc.sqlite"
+unlink(sqlite_file)
+conn = dbConnect(RSQLite::SQLite(), sqlite_file)
+reader$write_sqlite(conn,
 	target_tables = c("P1","P3","P4","P5","P6","P7","P12","P13"))
+dbDisconnect(conn)
 
-conn = dbConnect(RSQLite::SQLite(), "demosf2010_dhc.sqlite")
+conn = dbConnect(RSQLite::SQLite(), sqlite_file)
 dbListTables(conn)
-rs = dbSendQuery(conn, statement = "
+dat = dbGetQuery(conn, statement = "
 	select *
 	from geo_050 g, P1 p
 	where p.LOGRECNO == g.LOGRECNO
 	and p.FILEID == g.FILEID
 	order by state, county
 ")
-dat = dbFetch(rs)
 head(dat)
 dbClearResult(rs)
 dbDisconnect(conn)
+
+
+
+rs = dbSendQuery(conn, statement = "
+	select *
+	from geo_050 g
+")
+dat = dbFetch(rs)
