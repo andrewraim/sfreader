@@ -1,8 +1,5 @@
-# TBD: This is different than the AIAN structure. We have to work through all the states.
-# Also, the MS Access tables aren't provided, so it may be uglier to code...
-
 #' @export
-demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
+demosf2010_pl_reader = R6Class("demosf2010_pl_reader",
 	private = list(
     	path_to_files = NULL,
 		geo_list = NULL,
@@ -15,7 +12,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 			state_dirs = demosf2010_states %>%
 				inner_join(subdirs, by = c("name" = "name"))
 
-			summary_levels = names(demosf2010_dhc_geo_cols)
+			summary_levels = names(demosf2010_pl_geo_cols)
 			private$geo_list = list()
 
 			for (idx_level in 1:length(summary_levels)) {
@@ -23,7 +20,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 				logger("Processing summary_level %s\n", summary_level)
 
 				# We will interpret all columns as strings.
-				cols = demosf2010_dhc_geo_cols[[summary_level]]
+				cols = demosf2010_pl_geo_cols[[summary_level]]
 				ncols = nrow(cols)
 				col_types = paste(rep("c", ncols), collapse = "")
 
@@ -38,7 +35,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 
 					# Build a data structure with geo information. This serves as
 					# an index into all the other data files.
-					geo_file = sprintf("%s/%s/%sgeo2010.dhc",
+					geo_file = sprintf("%s/%s/%sgeo2010.pl",
 						private$path_to_files, state_name, state_abbr)
 
 					# Need the first 11 characters of each record to determine the type
@@ -48,7 +45,16 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 
 					idx_lines = which(sl == summary_level)
 					if (length(idx_lines) > 0) {
-						dat_new = read_fwf(lines[idx_lines], col_positions = cols, col_types = col_types)
+						content = lines[idx_lines]
+						if (length(idx_lines) == 1) {
+							# If only one row is present in content, read_fwf will treat
+							# it as a filename unless it ends with a newline. So we add a
+							# newline.
+							if (!endsWith(content, "\n")) {
+								content = paste0(content, "\n")
+							}
+						}
+						dat_new = read_fwf(content, col_positions = cols, col_types = col_types)
 						private$geo_list[[idx_level]] = private$geo_list[[idx_level]] %>%
 							union_all(dat_new)
 					}
@@ -64,10 +70,10 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 			private$path_to_files = path_to_files
 		},
 		getTableNames = function() {
-			return(demosf2010_dhc_tables)
+			return(demosf2010_pl_tables)
 		},
 		getSummaryLevels = function() {
-			return(demosf2010_dhc_geo_cols)
+			return(demosf2010_pl_geo_cols)
 		},
 		getDataDictionary = function() {
 			return(demosf2010_geoheader_dd)
@@ -78,7 +84,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 
 			if (is.null(target_tables)) {
 				logger("Saving all available tables to the database\n")
-				target_tables = demosf2010_dhc_segments$NUMBER
+				target_tables = demosf2010_pl_segments$NUMBER
 			}
 
 			private$readSummaryLevels()
@@ -95,7 +101,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 			# To prevent having to read CSVs over and over again, let's try to go
 			# one segment at a time...
 			target_chariter = "000"
-			segments = demosf2010_dhc_segments %>%
+			segments = demosf2010_pl_segments %>%
 				filter(NUMBER %in% target_tables) %>%
 				group_by(SEGMENT) %>%
 				summarize(n = n())
@@ -114,7 +120,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 					logger("Processing file %s\n", data_file)
 					dat = read_csv(file = data_file, col_names = FALSE)
 
-					dat_segment = demosf2010_dhc_segments %>%
+					dat_segment = demosf2010_pl_segments %>%
 						arrange(ORDERID) %>%
 						filter(SEGMENT == target_segment) %>%
 						filter(NUMBER %in% target_tables) %>%
@@ -153,13 +159,7 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 			}
 		},
 		getRawColNames = function(table_name, count) {
-			if (startsWith(table_name, "PCT")) {
-				prefix = "PCT"
-				num = substr(table_name, 4, nchar(table_name))
-			} else if (startsWith(table_name, "PCO")) {
-				prefix = "PCO"
-				num = substr(table_name, 4, nchar(table_name))
-			} else if (startsWith(table_name, "P")) {
+			if (startsWith(table_name, "P")) {
 				prefix = "P"
 				num = substr(table_name, 2, nchar(table_name))
 			} else if (startsWith(table_name, "H")) {

@@ -1,21 +1,15 @@
 library(sfreader)
 
-dhc_dest_dir = "~/datasets/demo_2010_us/dhc"
-pl94_dest_dir = "~/datasets/demo_2010_us/pl94"
+dest_dir = "~/datasets/demo_2010_us/pl94"
 
 if (FALSE) {
 	dat = demosf2010_states %>%
-		filter(abbreviation %in% c("ok", "ri", "md", ""))
-
-	dat = demosf2010_states %>%
-		filter(abbreviation %in% c("us"))
-
-	demosf2010_dhc_download(dat$name, dhc_dest_dir)
-	demosf2010_pl94_download(dat$name, pl94_dest_dir)
+		filter(abbreviation %in% c("ok", "ri", "md"))
+	demosf2010_dhc_download(dat$name, dest_dir)
 }
 
 # The PL94 and DHC products each get their own reader
-reader = demosf2010_dhc_reader$new(dhc_dest_dir)
+reader = demosf2010_dhc_reader$new(dest_dir)
 
 reader$getTableNames()
 reader$getSummaryLevels()
