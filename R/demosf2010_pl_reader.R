@@ -143,7 +143,12 @@ demosf2010_pl_reader = R6Class("demosf2010_pl_reader",
 						}
 						dat_selected = dat[,c(1:5, idx_cols)]
 						colnames(dat_selected) = cn
-						dat_list[[table_name]][[idx_file]] = dat_selected
+						dat_list[[table_name]][[idx_file]] = dat_selected %>%
+							mutate(FILEID = as.character(FILEID)) %>%
+							mutate(STUSAB = as.character(STUSAB)) %>%
+							mutate(CHARITER = as.character(CHARITER)) %>%
+							mutate(CIFSN = as.character(CIFSN)) %>%
+							mutate(LOGRECNO = as.character(LOGRECNO))
 					}
 				}
 
@@ -168,10 +173,9 @@ demosf2010_pl_reader = R6Class("demosf2010_pl_reader",
 			} else {
 				stop("Don't know how to handle table name")
 			}
-			if (str_ends(num, "[0-9]+")) {
-				num = paste0(num, "0")
-			}
-			padded_num = str_pad(num, 4, "left", pad = "0")
+
+			# Unlike DHC tables, we only pad table name with three zeros here...
+			padded_num = str_pad(num, 3, "left", pad = "0")
 			sprintf("%s%s%04d", prefix, padded_num, 1:count)
 		}
 	)

@@ -137,7 +137,12 @@ demosf2010_dhc_reader = R6Class("demosf2010_dhc_reader",
 						}
 						dat_selected = dat[,c(1:5, idx_cols)]
 						colnames(dat_selected) = cn
-						dat_list[[table_name]][[idx_file]] = dat_selected
+						dat_list[[table_name]][[idx_file]] = dat_selected %>%
+							mutate(FILEID = as.character(FILEID)) %>%
+							mutate(STUSAB = as.character(STUSAB)) %>%
+							mutate(CHARITER = as.character(CHARITER)) %>%
+							mutate(CIFSN = as.character(CIFSN)) %>%
+							mutate(LOGRECNO = as.character(LOGRECNO))
 					}
 				}
 
