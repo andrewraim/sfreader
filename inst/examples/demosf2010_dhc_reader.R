@@ -1,4 +1,5 @@
 library(sfreader)
+library(RSQLite)
 
 dest_dir = "~/datasets/demo_2010_us/pl94"
 
