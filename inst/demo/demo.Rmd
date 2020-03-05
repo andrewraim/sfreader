@@ -35,7 +35,7 @@ Unzip the contents to a folder on your local computer, say
 Now we will initialize an `sf2_2010_reader` object and point it to
 the files.
 
-```{r, echo=FALSE}
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(sfreader)
 reader = sf2_2010_reader$new("C:/Users/raim0001/Documents/datasets/sf2_2010/Oklahoma/")
 ```
@@ -43,7 +43,7 @@ reader = sf2_2010_reader$new("C:/Users/raim0001/Documents/datasets/sf2_2010/Okla
 Our destination will be a SQLite database which resides in a file `sf2_2010.sqlite`.
 Let's create the database there. To avoid using too much space, let's just save 
 PCT1 (Total Population) and PCT3 (Sex x Age).
-```{r, echo=FALSE}
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 library(RSQLite)
 sqlite_file = "sf2_2010.sqlite"
 unlink(sqlite_file)
@@ -60,6 +60,14 @@ which can connect to the database. First, let's request the list of tables.
 conn = dbConnect(RSQLite::SQLite(), sqlite_file)
 dbListTables(conn)
 ```
+
+Here is a brief description of all the tables:  
+- `Geo_XYZ`: Geo table for summary level `XYZ`. For example, `Geo_040` represents states.  
+- `Iterations`: List of iterations (race classifications).  
+- `SummaryLevels`: List of available summary levels.  
+- `TableNames`: Names and descriptions of tables in this summary file.  
+- `PCT1`: The table `PCT1` for all summary levels and all iterations.  
+- `PCT3`: The table `PCT3` for all summary levels and all iterations.  
 
 We can list fields in some of those tables.
 ```{r}
@@ -78,20 +86,20 @@ head(q_out)
 And here are a few queries involving multiple tables.
 ```{r}
 q_out = dbGetQuery(conn, statement = "
-select g.REGION, g.DIVISION, g.STATE, g.COUNTY, p.*
-from Geo_050 g, PCT1 p
-where g.FILEID == p.FILEID
-and g.LOGRECNO == p.LOGRECNO
+	select g.REGION, g.DIVISION, g.STATE, g.COUNTY, p.*
+	from Geo_050 g, PCT1 p
+	where g.FILEID == p.FILEID
+	and g.LOGRECNO == p.LOGRECNO
 ")
-head(q_out)
+head(q_out, 3)
 
 q_out = dbGetQuery(conn, statement = "
-select g.REGION, g.DIVISION, g.STATE, g.COUNTY, p.CHARITER, p.LOGRECNO,
-       p.PCT0010001, it.Iterations
-from Geo_050 g, PCT1 p, Iterations it
-where g.FILEID == p.FILEID
-and g.LOGRECNO == p.LOGRECNO
-and p.CHARITER == it.`Iteration Code`
+	select g.REGION, g.DIVISION, g.STATE, g.COUNTY, p.CHARITER, p.LOGRECNO,
+		p.PCT0010001, it.Iterations
+	from Geo_050 g, PCT1 p, Iterations it
+	where g.FILEID == p.FILEID
+	and g.LOGRECNO == p.LOGRECNO
+	and p.CHARITER == it.`Iteration Code`
 ")
-head(q_out)
+head(q_out, 3)
 ```
