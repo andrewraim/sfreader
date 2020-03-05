@@ -60,50 +60,59 @@ sf2_2010_reader = R6Class("sf2_2010_reader",
 		write_sqlite = function(conn, target_tables = NULL)
 		{
 			stopifnot(dbIsValid(conn))
+			summary_levels = self$getSummaryLevels()
+
+			# Write auxiliary tables
+			dbWriteTable(conn, "Iterations", self$getIterations())
+			dbWriteTable(conn, "SummaryLevels", data.frame(SUMLEV = self$getSummaryLevels()))
+			dbWriteTable(conn, "TableNames", sf2_2010_tables)
 
 			if (is.null(target_tables)) {
 				logger("Saving all available tables to the database\n")
 				target_tables = sf2_2010_tables$NUMBER
 			}
 
-			for (idx_level in 1:length(summary_levels)) {
+			for (idx_level in seq_along(summary_levels)) {
 				summary_level = summary_levels[idx_level]
 				logger("Creating sqlite table for summary_level %s\n", summary_level)
-				table_name = sprintf("geo_%s", summary_level)
+				table_name = sprintf("Geo_%s", summary_level)
 				dbWriteTable(conn, table_name, private$geo_list[[idx_level]])
 			}
 
-			# Now read each SF table and make a corresponding sqlite table
+			# Now read each SF table and make a corresponding sqlite table.
 			# To prevent having to read CSVs over and over again, let's try to go
 			# one segment at a time...
 
 			# Let's try to collapse over chariters (detailed races), so they they
 			# just form another column in the table.
-			# sf2_2010_iterations
-			target_chariters = sf2_2010_iterations$Code
+
+			# I don't think we need this object...
+			# target_chariters = sf2_2010_iterations[["Iteration Code"]]
 
 			segments = sf2_2010_tables %>%
 				filter(NUMBER %in% target_tables) %>%
 				group_by(SEGMENT) %>%
 				summarize(n = n())
+			# For each of the relevant segments
 			for (idx_segment in 1:nrow(segments)) {
 				target_segment = as.integer(segments$SEGMENT[idx_segment])
 				logger("Processing segment %d files\n", target_segment)
 
 				data_files = list.files(
-					path = sprintf("%s/National", private$path_to_files),
-					pattern = sprintf("us.*%02d2010.an2", target_segment),
+					path = sprintf("%s", private$path_to_files),
+					pattern = sprintf(".*%02d2010.sf2", target_segment),
 					full.names = TRUE, recursive = TRUE)
 
 				dat_segment = sf2_2010_tables %>%
 					filter(as.integer(SEGMENT) == target_segment)
 
 				segment_dd = sf2_2010_geoheader_dd %>%
-					filter(as.integer(`DATA SEGMENT`) == target_segment) %>%
+					filter(as.integer(`SEGMENT`) == target_segment) %>%
 					filter(`FIELD CODE` != "") %>%
-					arrange(SORTID)
+					arrange(SORT_ID)
 
 				dat_list = list()
+				# For each data file (chariter) that relates to this segment
 				for (idx_file in 1:length(data_files)) {
 					data_file = data_files[idx_file]
 					logger("Processing file %s\n", data_file)
@@ -114,11 +123,14 @@ sf2_2010_reader = R6Class("sf2_2010_reader",
 					cn = colnames(get(cn_dat))
 					colnames(dat) = cn
 
+					# For each table within the segment
 					for (idx_tables in 1:nrow(dat_segment)) {
 						table_name = dat_segment$NUMBER[idx_tables]
 						logger("Processing table %s\n", table_name)
 
-						idx_col = which(segment_dd$`TABLE NUMBER` == table_name) + 5
+						# The magic number "5" is the number of header columns in each
+						# file, before the actual data columns.
+						idx_col = which(segment_dd$TABLE == table_name) + 5
 
 						dat_selected = dat[,c(1:5, idx_col)] %>%
 							mutate(FILEID = as.character(FILEID)) %>%
@@ -127,76 +139,28 @@ sf2_2010_reader = R6Class("sf2_2010_reader",
 							mutate(CIFSN = as.character(CIFSN)) %>%
 							mutate(LOGRECNO = as.character(LOGRECNO))
 						if (length(dat_list) < idx_tables) {
+							# If this is the first time we've encountered this table
+							# create a space for it in the list of tables.
 							dat_list[[idx_tables]] = list()
 						}
 						dat_list[[idx_tables]][[idx_file]] = dat_selected
 					}
 				}
 
+				# Now all the tables (for all iterations) in this segment should be loaded.
+				# We write them to the database.
 				for (idx_table in 1:length(dat_list)) {
 					table_name = dat_segment$NUMBER[idx_table]
 					dat_table = dat_list[[idx_table]][[1]]
-					seq_files = setdiff(seq_along(dat_list[[table_name]]), 1)
+					n_files = length(dat_list[[idx_table]])
+					seq_files = setdiff(seq_len(n_files), 1)
 					for (idx_file in seq_files) {
 						dat_table = dat_table %>%
-							union_all(dat_list[[table_name]][[idx_file]])
+							union_all(dat_list[[idx_table]][[idx_file]])
 					}
-					dbWriteTable(conn, table_name, dat)
+					dbWriteTable(conn, table_name, dat_table)
 				}
 			}
-		},
-		getTable = function(table_name, sumlev, iteration, transform_colnames = FALSE) {
-			stopifnot(sumlev %in% names(sf2_2010_geo_cols))
-
-			target_segment = sf2_2010_tables %>%
-				filter(NUMBER == table_name) %>%
-				select(SEGMENT) %>%
-				as.integer()
-			if (is.na(target_segment)) {
-				stop("Could not locate specified table")
-			}
-
-			table_dd = sf2_2010_geoheader_dd %>%
-				filter(`TABLE NUMBER` == table_name) %>%
-				filter(`FIELD CODE` != "") %>%
-				arrange(SORTID)
-
-			target_chariter = iteration
-			target_geo = private$geo_list[[sumlev]] %>%
-				select(-FILEID, -STUSAB, -SUMLEV, -GEOCOMP, -CHARITER, -CIFSN)
-
-			dat_file = list.files(
-				path = private$path_to_files,
-				pattern = sprintf("us%s%02d", target_chariter, target_segment),
-				full.names = TRUE)
-
-			cn_dat = sprintf("sf2_2010_segment%02d", target_segment)
-			cn = colnames(get(cn_dat))
-			dat = read_csv(dat_file, col_names = cn) %>%
-				select(LOGRECNO, table_dd$`FIELD CODE`)
-
-			result = target_geo %>%
-				inner_join(dat, by = c("LOGRECNO" = "LOGRECNO"))
-
-			if (transform_colnames) {
-				# This seems a little fragile, the indentations and colons in the
-				# column names seem to coorrespond to logical hierarchical names.
-				# Try to convert them so that each column name is interpretable on
-				# its own.
-				#
-				# It looks like there are five spaces used to indent at each level.
-				table_dd = table_dd %>%
-					mutate(cn_xform = transform_col_names(table_dd$`FIELD NAME`, 5))
-
-				dat_colnames = data.frame(col = colnames(result)) %>%
-					mutate(col = as.character(col)) %>%
-					left_join(table_dd, c("col" = "FIELD CODE")) %>%
-					mutate(cn_xform = ifelse(!is.na(cn_xform), cn_xform, col))
-
-				colnames(result) = dat_colnames$cn_xform
-			}
-
-			return(result)
 		}
 	)
 )
