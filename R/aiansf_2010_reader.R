@@ -99,7 +99,8 @@ aiansf_2010_reader = R6Class("aiansf_2010_reader",
 					full.names = TRUE, recursive = TRUE)
 
 				dat_segment = aiansf_2010_tables %>%
-					filter(as.integer(SEGMENT) == target_segment)
+					filter(as.integer(SEGMENT) == target_segment) %>%
+					filter(NUMBER %in% target_tables)
 
 				segment_dd = aiansf_2010_geoheader_dd %>%
 					filter(as.integer(`DATA SEGMENT`) == target_segment) %>%
