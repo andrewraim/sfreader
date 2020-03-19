@@ -50,3 +50,18 @@ and p.CHARITER == it.`Iteration Code`
 
 q_out = dbGetQuery(conn, statement = "select * from Iterations")
 View(q_out)
+
+# Let's get results for detailed group "Chinese Alone"
+q_out = dbGetQuery(conn, statement = "
+select g.REGION, g.DIVISION, g.STATE, g.COUNTY, p.*
+from Geo_050 g, PCT1 p
+where g.FILEID == p.FILEID
+and g.LOGRECNO == p.LOGRECNO
+and p.CHARITER = '016'
+")
+
+data(fips_codes)
+county_fips = fips_codes %>% filter(state_code == '40')
+q_out %>%
+	inner_join(county_fips, by = c('COUNTY' = 'county_code')) %>%
+	select(STATE, COUNTY, COUNTY_NAME = county, PCT0010001)
