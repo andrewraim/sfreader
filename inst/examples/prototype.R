@@ -38,8 +38,6 @@ sf2_2010_iterations
 sf2_2010_segments
 sf2_2010_tables
 
-# TBD: We probably want the table of summary levels (sumlev)
-
 # TBD: I think we're not supposed to join to CHARITER in the geo table; that
 # always seems to be set to 100.
 
@@ -52,4 +50,22 @@ dat_joined = geo_dat %>% select(FILEID, STUSAB, SUMLEV, GEOCOMP, CIFSN, LOGRECNO
 	inner_join(dat, c("STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
 	inner_join(sf2_2010_iterations, c("CHARITER" = "CODE"))
 View(dat_joined)
+
+# Let's try to get all the county-level data for table PCT002
+target_files = dat_files %>% filter(SEGMENT == '02')
+col_defs = sf2_2010_segments %>% filter(SEGMENT == '02')
+
+dat_joined = tibble()
+for (i in 1:nrow(target_files)) {
+	cat("Reading file", i, "of", nrow(target_files), "\n")
+	dat = read_csv(target_files$PATH[i], col_names = col_defs$FIELD, col_types = 'cccccdddddd')
+	dat_joined_part = geo_dat %>% select(-CHARITER) %>%
+		inner_join(dat, c("STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
+		inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
+		filter(SUMLEV == '050')
+	dat_joined = rbind(dat_joined, dat_joined_part)
+}
+dat_result = dat_joined %>% select(STATE, COUNTY, CHARITER, PCT0020001, PCT0020002,
+	PCT0020003, PCT0020004, PCT0020005, PCT0020006, DESCRIPTION)
+View(dat_result)
 
