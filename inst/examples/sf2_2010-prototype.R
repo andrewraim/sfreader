@@ -7,44 +7,27 @@ library(readr)
 library(tibble)
 library(dplyr)
 
-read_geo = function(path) {
-	# Read in the fixed width geoheader
-	geo_dat = read_fwf(file = geo_path,
-		col_positions = fwf_widths(sf2_2010_geo_cols[['FIELD_SIZE']]),
-		col_types = paste0(sf2_2010_geo_cols[['DATA_TYPE']], collapse = ""))
-
-	# Assign column headers based on access specifications
-	colnames(geo_dat) = sf2_2010_geo_cols[['FIELD']]
-	return(geo_dat)
-}
-
-interpret_data_filenames = function(paths) {
-	filenames = basename(paths)
-	match_out = str_match(filenames, '([\\w]{2})([\\d]{3})([\\d]{2})([\\d]{4})\\.(.*)')
-	tibble(
-		STATE = match_out[,2],
-		ITERATION_CODE = match_out[,3],
-		SEGMENT = match_out[,4],
-		YEAR = match_out[,5],
-		SF_TYPE = match_out[,6],
-		PATH = paths
-	)
-}
-
 # Assume files are in the following locations
 basedir = "/path/to/sf2/District_of_Columbia"
 geo_path = sprintf("%s/dcgeo2010.sf2", basedir)
 data_paths = list.files(basedir, pattern = "dc.*.sf2", full.names = TRUE)
 
-# Interpret the Geo file. This only needs to be done once for this set of files.
-geo_dat = read_geo(geo_path)
+sf = SF2010()
 
-sf2_2010_geo_cols
-sf2_2010_iterations
-sf2_2010_segments
-sf2_2010_tables
+# Interpret the Geo file. This only needs to be done once for this set of files.
+geo_dat = read_geo(sf, geo_path)
+
+# Here are helper tables we need to interpret the data. Should they be accessed
+# through methods like "get_geo_cols(sf)", or is that overkill with the object
+# orientation? Also, will all (or most) summary files have similar helper
+# tables?
+print(sf2_2010_geo_cols, n = 10)
+print(sf2_2010_iterations, n = 10)
+print(sf2_2010_segments, n = 10)
+print(sf2_2010_tables, n = 10)
 
 # ----- Example 1 -----
+# Let's try to read data for table PCT002 from one file.
 
 # Identify segments for table PCT002
 segments = sf2_2010_segments %>%
@@ -52,14 +35,15 @@ segments = sf2_2010_segments %>%
 	pull(SEGMENT)
 
 # Identify CHARITER of interest. Let's select AIAN alone, without any
-# modifiers. Note that we need to escape parantheses with backslashes here.
+# modifiers. Note that fixed() makes str_detect treat the pattern argument as
+# a fixed string instead of a regex.
 chariters = sf2_2010_iterations %>%
-	filter(str_detect(DESCRIPTION, "American Indian and Alaska Native alone \\(300, A01-Z99\\)")) %>%
+	filter(str_detect(DESCRIPTION, fixed("American Indian and Alaska Native alone (300, A01-Z99)"))) %>%
 	pull(CODE)
 
 # The names of the data files indicate their contents. The following functions
 # extracts the information from the names for easier processing.
-dat_files = interpret_data_filenames(data_paths)
+dat_files = interpret_data_filenames(sf, data_paths)
 
 # Find the files with our target chariters and segments. (There should only
 # be one file in this example).
