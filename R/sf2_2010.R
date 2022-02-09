@@ -1,10 +1,10 @@
 #' @export
-SF2010 = function() {
-	new("SF2010")
+SF2_2010 = function() {
+	new("SF2_2010")
 }
 
 #' @export
-setMethod("read_geo", c(sf = "SF2010", path = "character"), function(sf, path)
+setMethod("read_geo", c(sf = "SF2_2010", path = "character"), function(sf, path)
 {
 	# Read in the geo file, which is in a fixed width format. Information about
 	# widths and column types is stored in this package.
@@ -18,7 +18,7 @@ setMethod("read_geo", c(sf = "SF2010", path = "character"), function(sf, path)
 })
 
 #' @export
-setMethod("interpret_data_filenames", c(sf = "SF2010", path = "character"), function(sf, paths)
+setMethod("interpret_data_filenames", c(sf = "SF2_2010", path = "character"), function(sf, paths)
 {
 	filenames = basename(paths)
 	match_out = str_match(filenames, '([\\w]{2})([\\d]{3})([\\d]{2})([\\d]{4})\\.(.*)')
