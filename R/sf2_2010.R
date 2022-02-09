@@ -1,5 +1,6 @@
 #' @export
-SF2_2010 = function() {
+SF2_2010 = function()
+{
 	new("SF2_2010")
 }
 
