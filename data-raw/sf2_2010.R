@@ -12,33 +12,8 @@ sf2_2010_geo_cols = read_csv("data-raw/sf2_2010_geo_cols.csv", col_types = "icii
 # Characteristic iterations
 sf2_2010_iterations = read_csv("data-raw/sf2_2010_iterations.csv", col_types = "cc")
 
-# Segments
-# These partition of table variables into 11 types of files. Note that the
-# "logical" table name (e.g. "PCT001") is a prefix in the variable name.
-# Variable names in the vectors above are assumed to be in order of the columns
-# in each associated file.
-segment01_fields = read_csv("data-raw/sf2_2010_segment01.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "01", POSITION = row_number())
-segment02_fields = read_csv("data-raw/sf2_2010_segment02.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "02", POSITION = row_number())
-segment03_fields = read_csv("data-raw/sf2_2010_segment03.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "03", POSITION = row_number())
-segment04_fields = read_csv("data-raw/sf2_2010_segment04.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "04", POSITION = row_number())
-segment05_fields = read_csv("data-raw/sf2_2010_segment05.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "05", POSITION = row_number())
-segment06_fields = read_csv("data-raw/sf2_2010_segment06.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "06", POSITION = row_number())
-segment07_fields = read_csv("data-raw/sf2_2010_segment07.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "07", POSITION = row_number())
-segment08_fields = read_csv("data-raw/sf2_2010_segment08.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "08", POSITION = row_number())
-segment09_fields = read_csv("data-raw/sf2_2010_segment09.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "09", POSITION = row_number())
-segment10_fields = read_csv("data-raw/sf2_2010_segment10.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "10", POSITION = row_number())
-segment11_fields = read_csv("data-raw/sf2_2010_segment11.csv", col_types = "c", col_names = FALSE) %>% mutate(SEGMENT = "11", POSITION = row_number())
-
-sf2_2010_segments = rbind(segment01_fields, segment02_fields,segment03_fields,
-	segment04_fields, segment05_fields, segment06_fields, segment07_fields,
-	segment08_fields, segment09_fields, segment10_fields, segment11_fields) %>%
-	rename(FIELD = 1) %>%
-	select(SEGMENT, POSITION, FIELD) %>%
-	mutate(TABLE = case_when(
-		startsWith(FIELD, "PCT") ~ substring(FIELD, 1, 6),
-		startsWith(FIELD, "PCO") ~ substring(FIELD, 1, 6),
-		startsWith(FIELD, "HCT") ~ substring(FIELD, 1, 6),
-		TRUE ~ "HEAD"))
+# Segment definitions, including logical tables and variable descriptions
+sf2_2010_segments = read_csv("data-raw/sf2_2010_segments.csv", col_types = "cicccc")
 
 # Table definitions
 sf2_2010_tables = read_csv("data-raw/sf2_2010_tables.csv", col_types = "cc")
