@@ -21,12 +21,17 @@ sf2_2010_tables = read_csv("data-raw/sf2_2010_tables.csv", col_types = "cc")
 # Data composition definitions
 sf2_2010_datacomp = read_csv("data-raw/sf2_2010_datacomp.csv", col_types = "cc")
 
+# State information
+sf2_2010_states = read_csv("data-raw/sf2_2010_states.csv", col_types = "cc")
+
+
 # Save data for use in the package
 use_data(sf2_2010_geo_cols, internal = TRUE, overwrite = TRUE)
 use_data(sf2_2010_iterations, internal = TRUE, overwrite = TRUE)
 use_data(sf2_2010_segments, internal = TRUE, overwrite = TRUE)
 use_data(sf2_2010_tables, internal = TRUE, overwrite = TRUE)
 use_data(sf2_2010_datacomp, internal = TRUE, overwrite = TRUE)
+use_data(sf2_2010_states, internal = TRUE, overwrite = TRUE)
 
 # TBD: Do we still need the following information from the Access database?
 # There is some additional information in here; e.g., descriptive table names,

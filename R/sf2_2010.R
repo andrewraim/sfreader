@@ -32,3 +32,20 @@ setMethod("interpret_data_filenames", c(sf = "SF2_2010", path = "character"), fu
 		PATH = paths
 	)
 })
+
+#' @export
+setMethod("get_data_urls", c(sf = "SF2_2010", base_url = "character"),
+	function(sf, base_url = "https://www2.census.gov/census_2010/05-Summary_File_2/")
+{
+	sf2_2010_states %>%
+		mutate(URL = sprintf("%s/%s/%s2010.sf2.zip", base_url, NAME, tolower(ABBREV)))
+})
+
+#' @export
+setMethod("get_data_urls", c(sf = "SF2_2010", base_url = "missing"),
+	function(sf)
+{
+	base_url = "https://www2.census.gov/census_2010/05-Summary_File_2/"
+	get_data_urls(sf, base_url)
+})
+

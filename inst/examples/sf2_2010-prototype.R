@@ -189,3 +189,19 @@ dat_joined = geo_dat %>%
 
 # View the result
 View(dat_joined)
+
+# ----- Example 4 -----
+# Get URLs of the data files for DC and download/unzip in R
+library(curl)
+
+dat_url = get_data_urls(sf) %>%
+	filter(ABBREV == "DC") %>%
+	pull(URL)
+
+dest_dir = "my_sf2_files"
+dir.create(dest_dir)
+
+local_zip_file = basename(dat_url)
+curl_download(url = dat_url, destfile = local_zip_file)
+
+unzip(local_zip_file, exdir = dest_dir)
