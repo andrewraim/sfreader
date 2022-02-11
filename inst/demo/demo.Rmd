@@ -16,7 +16,7 @@ different formats, each requires its own reader to be written.
 
 This is a personal project of the author, and is not endorsed in any way
 by the U.S. Census Bureau. The package is also currently under heavy
-construction, and should not be depended upon in any serius way.
+construction, and should not be depended upon in any serous way.
 
 As of this writing, the 2010 SF2 and 2010 AIAN SF readers are functioning.
 
