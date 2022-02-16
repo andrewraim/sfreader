@@ -207,13 +207,107 @@ curl_download(url = dat_url, destfile = local_zip_file)
 unzip(local_zip_file, exdir = dest_dir)
 
 
+# ---- Example 5 ----
+# White and black renters over 18 in NY by lowest level of geography available
+# Renter = segment
+# white and black = iteration
+
+basedir = "~/data/ny2010.sf2/"
+geo_path = list.files(basedir, pattern = '(\\w){2}geo(\\d){4}.sf2', full.names = TRUE)
+data_paths = list.files(basedir, pattern = '(\\w){2}(\\d){5}(\\d){4}.sf2', full.names = TRUE)
+
+# Create a "summary file" object
+sf = SF2_2010()
+
+# Interpret the Geo file. This only needs to be done once for this set of files.
+geo_dat = read_geo(sf, geo_path)
+
+# Here are helper tables we need to interpret the data. Should they be accessed
+# through methods like "get_geo_cols(sf)", or is that overkill with the object
+# orientation? Also, will all (or most) summary files have similar helper
+# tables?
+print(sf2_2010_geo_cols, n = 10)
+print(sf2_2010_iterations, n = 10)
+print(sf2_2010_segments, n = 10)
+print(sf2_2010_tables, n = 10)
+
+### Step 1: find the table number. We do this by looking at segments df.
+
+# Find segments that relate to renters
+grep(pattern = "\\brent",
+	 x = sf2_2010_segments$DESCRIPTION,
+	 ignore.case = TRUE,
+	 value = TRUE)
+# Looks like 18+ is not available. Only 15-24, 25-34, 35-44, ..., 85+
+# Maybe those ages are only for the householder? Like head of household?
+# Let's just use: "Total: Renter-occupied"
 
 
+# Filter by "Total: Renter-occupied" and nothing after it ($)
+sf2_2010_segments %>%
+	filter(grepl("Total: Renter-occupied$", DESCRIPTION))
+# What is difference between these 3 tables?
 
 
+# I have Identified segments in table HCT010
+segments = sf2_2010_segments %>%
+	filter(TABLE == 'HCT010') %>%
+	pull(SEGMENT)
 
 
+# What is lowest level of geo available?
+geo_dat %>%
+	select(COUNTY, TRACT, BLKGRP, BLOCK) %>%
+	summarise_all(n_distinct)
+# Looks like TRACT is lowest
 
+
+### Step 2: Identify CHARITER of interest.
+grep(pattern = "black",
+	 x = sf2_2010_iterations$DESCRIPTION,
+	 ignore.case = TRUE,
+	 value = TRUE)
+
+chariters = sf2_2010_iterations %>%
+		filter(grepl("Black or African American alone$", DESCRIPTION)) %>%
+		pull(CODE)
+
+# The names of the data files indicate their contents. The following functions
+# extracts the information from the names for easier processing.
+dat_files = interpret_data_filenames(sf, data_paths)
+
+# Find the files with our target chariters and segments. (There should only
+# be one file in this example).
+target_file = dat_files %>%
+	filter(ITERATION_CODE %in% chariters & SEGMENT %in% segments) %>%
+	pull(PATH)
+
+# The data files do not have headers, so let's get the column definitions from
+# the sfreader package.
+col_defs = sf2_2010_segments %>%
+	filter(SEGMENT %in% segments)
+
+# Load the data file and apply the header.
+dat = read_csv(target_file, col_names = col_defs$FIELD)
+
+# Join the data file to the geo file for information about the geography of
+# the records. On the last line, "everything" is a placeholder in tidyselect
+# for the columns not named earlier in the statement.
+#
+# I think we are not supposed to join to CHARITER in the geo table; that
+# always seems to be set to 100.
+
+
+##################### STOPPED HERE ######################
+
+dat_joined = geo_dat %>%
+	select(-CHARITER) %>%
+	inner_join(dat, c("FILEID" = "FILEID", "STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
+	inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
+	select(LOGRECNO, PCT0020001, PCT0020002, PCT0020003, PCT0020004, PCT0020005, PCT0020006, everything())
+
+# View the result
+View(dat_joined)
 
 
 
