@@ -219,17 +219,12 @@ data_paths = list.files(basedir, pattern = '(\\w){2}(\\d){5}(\\d){4}.sf2', full.
 # Create a "summary file" object
 sf = SF2_2010()
 
+# The names of the data files indicate their contents. The following functions
+# extracts the information from the names for easier processing.
+dat_files = interpret_data_filenames(sf, data_paths)
+
 # Interpret the Geo file. This only needs to be done once for this set of files.
 geo_dat = read_geo(sf, geo_path)
-
-# Here are helper tables we need to interpret the data. Should they be accessed
-# through methods like "get_geo_cols(sf)", or is that overkill with the object
-# orientation? Also, will all (or most) summary files have similar helper
-# tables?
-print(sf2_2010_geo_cols, n = 10)
-print(sf2_2010_iterations, n = 10)
-print(sf2_2010_segments, n = 10)
-print(sf2_2010_tables, n = 10)
 
 ### Step 1: find the table number. We do this by looking at segments df.
 
@@ -249,7 +244,8 @@ sf2_2010_segments %>%
 # What is difference between these 3 tables?
 
 
-# I have Identified segments in table HCT010
+# I have Identified segments in table HCT010.
+# Set segments variable to filter data_files by
 segments = sf2_2010_segments %>%
 	filter(TABLE == 'HCT010') %>%
 	pull(SEGMENT)
@@ -260,6 +256,9 @@ geo_dat %>%
 	select(COUNTY, TRACT, BLKGRP, BLOCK) %>%
 	summarise_all(n_distinct)
 # Looks like TRACT is lowest
+# I'm not sure where this actually gets used...
+# Maybe the data will exist at all levels of geography in the target files
+#	that are specified by segments and chariters?
 
 
 ### Step 2: Identify CHARITER of interest.
@@ -268,13 +267,10 @@ grep(pattern = "black",
 	 ignore.case = TRUE,
 	 value = TRUE)
 
+# Set chariters variable to filter data_files by
 chariters = sf2_2010_iterations %>%
 		filter(grepl("Black or African American alone$", DESCRIPTION)) %>%
 		pull(CODE)
-
-# The names of the data files indicate their contents. The following functions
-# extracts the information from the names for easier processing.
-dat_files = interpret_data_filenames(sf, data_paths)
 
 # Find the files with our target chariters and segments. (There should only
 # be one file in this example).
@@ -304,12 +300,15 @@ dat_joined = geo_dat %>%
 	select(-CHARITER) %>%
 	inner_join(dat, c("FILEID" = "FILEID", "STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
 	inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
-	select(LOGRECNO, PCT0020001, PCT0020002, PCT0020003, PCT0020004, PCT0020005, PCT0020006, everything())
+	select(LOGRECNO, HCT0020001, everything())
 
 # View the result
 View(dat_joined)
 
+dat_joined[13:17, ] %>% View()
 
+dat_joined %>%
+	filter(SUMLEV == 140)
 
 
 
