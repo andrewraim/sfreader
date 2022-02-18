@@ -8,24 +8,18 @@ library(tibble)
 library(dplyr)
 
 # Assume files for a state of interest are in the folder "basedir".
-#
-# The geo filename will have format:
-# 1. Two letters abbreviating the state
-# 2. The string "geo"
-# 3. Four digits indicating the year
-# 4. An extension indicating the type of summary file
-#
-# Data filenames will have format:
-# 1. Two letters abbreviating the state
-# 2. Five numbers indicating characteristic iteration and segment
-# 3. Four digits indicating the year
-# 4. An extension indicating the type of summary file
 basedir = "/path/to/sf2/files/"
-geo_path = list.files(basedir, pattern = '(\\w){2}geo(\\d){4}.sf2', full.names = TRUE)
-data_paths = list.files(basedir, pattern = '(\\w){2}(\\d){5}(\\d){4}.sf2', full.names = TRUE)
 
 # Create a "summary file" object
 sf = SF2_2010()
+
+# Get patterns to identify geo and data files
+geo_pattern = get_filename_patterns(sf) %>% filter(TYPE == "geo") %>% pull()
+data_pattern = get_filename_patterns(sf) %>% filter(TYPE == "data") %>% pull()
+
+# Locate files
+geo_path = list.files(basedir, pattern = geo_pattern, full.names = TRUE)
+data_paths = list.files(basedir, pattern = data_pattern, full.names = TRUE)
 
 # Interpret the Geo file. This only needs to be done once for this set of files.
 geo_dat = read_geo(sf, geo_path)
@@ -35,9 +29,15 @@ geo_dat = read_geo(sf, geo_path)
 # orientation? Also, will all (or most) summary files have similar helper
 # tables?
 print(sf2_2010_geo_cols, n = 10)
+print(sf2_2010_geocomp, n = 10)
 print(sf2_2010_iterations, n = 10)
 print(sf2_2010_segments, n = 10)
+print(sf2_2010_states, n = 10)
 print(sf2_2010_tables, n = 10)
+print(sf2_2010_sumlev_state, n = 10)
+print(sf2_2010_sumlev_state_gq, n = 10)
+print(sf2_2010_sumlev_national, n = 10)
+print(sf2_2010_sumlev_national_gq, n = 10)
 
 # ----- Example 1 -----
 # Let's try to read data for table PCT002 from one file.
@@ -83,7 +83,7 @@ dat_joined = geo_dat %>%
 	select(-CHARITER) %>%
 	inner_join(dat, c("FILEID" = "FILEID", "STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
 	inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
-	select(LOGRECNO, PCT0020001, PCT0020002, PCT0020003, PCT0020004, PCT0020005, PCT0020006, everything())
+	select(LOGRECNO, starts_with("PCT002"), everything())
 
 # View the result
 View(dat_joined)
@@ -94,16 +94,22 @@ View(dat_joined)
 # Identify segments for table PCT002
 segments = sf2_2010_segments %>%
 	filter(TABLE == 'PCT002') %>%
-	pull(SEGMENT)
+	pull(SEGMENT) %>%
+	unique()
 
 # Find the files with our target chariters and segments.
 target_files = dat_files %>%
-	filter(SEGMENT %in% segments)
+	filter(SEGMENT == segments)
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
 col_defs = sf2_2010_segments %>%
 	filter(SEGMENT %in% segments)
+
+# Find the summary level that corresponds to counties
+sumlev = sf2_2010_sumlev_state %>%
+	filter(DESCRIPTION == "State-County") %>%
+	pull(CODE)
 
 # Build up a big table from the individual table files.
 dat_joined = tibble()
@@ -121,7 +127,7 @@ for (i in 1:nrow(target_files)) {
 		select(-CHARITER) %>%
 		inner_join(dat, c("FILEID" = "FILEID", "STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
 		inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
-		filter(SUMLEV == '050')
+		filter(SUMLEV == sumlev)
 
 	# Using rbind to append new data to running result. This is not
 	# the most efficient to compose large tables, but it's okay for this
@@ -131,8 +137,7 @@ for (i in 1:nrow(target_files)) {
 
 # Select only the columns of interest to get the final result.
 dat_result = dat_joined %>%
-	select(PCT0020001, PCT0020002, PCT0020003, PCT0020004, PCT0020005,
-		PCT0020006, STATE, COUNTY, CHARITER, DESCRIPTION)
+	select(starts_with('PCT002'), STATE, COUNTY, CHARITER, DESCRIPTION)
 
 # View the result.
 View(dat_result)
@@ -146,7 +151,8 @@ View(dat_result)
 # Identify segments for table PCT002
 segments = sf2_2010_segments %>%
 	filter(TABLE == 'PCT003') %>%
-	pull(SEGMENT)
+	pull(SEGMENT) %>%
+	unique()
 
 # Identify CHARITER of interest. Let's select AIAN alone, without any
 # modifiers. Note that fixed() makes str_detect treat the pattern argument as
@@ -162,7 +168,7 @@ dat_files = interpret_data_filenames(sf, data_paths)
 # Find the files with our target chariters and segments. (There should only
 # be one file in this example).
 target_file = dat_files %>%
-	filter(ITERATION_CODE %in% chariters & SEGMENT %in% segments) %>%
+	filter(ITERATION_CODE == chariters & SEGMENT == segments) %>%
 	pull(PATH)
 
 # The data files do not have headers, so let's get the column definitions from

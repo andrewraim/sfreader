@@ -1,6 +1,6 @@
 #' sfreader: Census Summary File Reader
 #'
-#' An R Package to read Census summary files. At least some particular parts we need.
+#' An R Package to read Census summary files.
 #'
 # @useDynLib sfreader, .registration = TRUE
 #' @import dplyr

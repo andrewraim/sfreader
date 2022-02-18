@@ -1,0 +1,12 @@
+CODE,PARENT_CODE,DESCRIPTION
+040,NA,"State"
+050,040,"State-County"
+320,040,"State-Metropolitan Statistical Area/Micropolitan Statistical Area"
+322,320,"State-Metropolitan Statistical Area/Micropolitan Statistical Area-County"
+323,320,"State-Metropolitan Statistical Area-Metropolitan Division"
+324,323,"State-Metropolitan Statistical Area-Metropolitan Division-County"
+340,040,"State-Combined Statistical Area"
+341,340,"State-Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area"
+500,040,"State-Congressional District"
+610,040,"State-State Legislative District (Upper Chamber)"
+620,040,"State-State Legislative District (Lower Chamber)"
