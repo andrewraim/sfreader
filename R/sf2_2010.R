@@ -9,7 +9,7 @@ setMethod("read_geo", c(sf = "SF2_2010", path = "character"), function(sf, path)
 {
 	# Read in the geo file, which is in a fixed width format. Information about
 	# widths and column types is stored in this package.
-	geo_dat = read_fwf(file = geo_path,
+	geo_dat = read_fwf(file = path,
 		col_positions = fwf_widths(sf2_2010_geo_cols[['FIELD_SIZE']]),
 		col_types = paste0(sf2_2010_geo_cols[['DATA_TYPE']], collapse = ""))
 
