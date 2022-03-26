@@ -80,4 +80,11 @@ sf2_2010_segments = rbind(
 	prep_table(dat, 11L)
 )
 
-write.csv(sf2_2010_segments, file = "data-raw/sf2_2010_segments.csv", quote = c(6), row.names = FALSE)
+# This is a quick workaround to add the short field name back into the table
+sf2_2010_fields = sf2_2010_fields %>%
+	mutate(FULL_DESCRIPTION = DESCRIPTION) %>%
+	rename(NAME = DESCRIPTION) %>%
+	rename(DESCRIPTION = FULL_DESCRIPTION)
+sf2_2010_fields$NAME = unlist(Map(function(x) { tail(x, 1) }, str_split(sf2_2010_fields$NAME, ": ")))
+
+write.csv(sf2_2010_fields, file = "data-raw/sf2_2010_fields.csv", quote = c(6,7), row.names = FALSE)

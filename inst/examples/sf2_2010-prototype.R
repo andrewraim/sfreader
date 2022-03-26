@@ -28,10 +28,10 @@ geo_dat = read_geo(sf, geo_path)
 # through methods like "get_geo_cols(sf)", or is that overkill with the object
 # orientation? Also, will all (or most) summary files have similar helper
 # tables?
-print(sf2_2010_geo_cols, n = 10)
+print(sf2_2010_geo_format, n = 10)
 print(sf2_2010_geocomp, n = 10)
 print(sf2_2010_iterations, n = 10)
-print(sf2_2010_segments, n = 10)
+print(sf2_2010_fields, n = 10)
 print(sf2_2010_states, n = 10)
 print(sf2_2010_tables, n = 10)
 print(sf2_2010_sumlev_state, n = 10)
@@ -43,7 +43,7 @@ print(sf2_2010_sumlev_national_gq, n = 10)
 # Let's try to read data for table PCT002 from one file.
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT002') %>%
 	pull(SEGMENT)
 
@@ -66,7 +66,7 @@ target_file = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.
@@ -92,7 +92,7 @@ View(dat_joined)
 # Let's try to get all the county-level data for table PCT002 in our files.
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT002') %>%
 	pull(SEGMENT) %>%
 	unique()
@@ -103,7 +103,7 @@ target_files = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Find the summary level that corresponds to counties
@@ -149,7 +149,7 @@ View(dat_result)
 # County level
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT003') %>%
 	pull(SEGMENT) %>%
 	unique()
@@ -173,7 +173,7 @@ target_file = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.

@@ -7,13 +7,13 @@ library(usethis)
 # Geo file
 # The geo file specifies geography information; it is joined to the record data.
 # This specifies the fixed width format of the data in the geo file.
-sf2_2010_geo_cols = read_csv("data-raw/sf2_2010_geo_cols.csv", col_types = "iciicc")
+sf2_2010_geo_format = read_csv("data-raw/sf2_2010_geo_format.csv", col_types = "iciicc")
 
 # Characteristic iterations
 sf2_2010_iterations = read_csv("data-raw/sf2_2010_iterations.csv", col_types = "cc")
 
 # Segment definitions, including logical tables and variable descriptions
-sf2_2010_segments = read_csv("data-raw/sf2_2010_segments.csv", col_types = "cicccc")
+sf2_2010_fields = read_csv("data-raw/sf2_2010_fields.csv", col_types = "cicccc")
 
 # Table definitions
 sf2_2010_tables = read_csv("data-raw/sf2_2010_tables.csv", col_types = "cc")
@@ -31,9 +31,9 @@ sf2_2010_sumlev_national = read_csv("data-raw/sf2_2010_sumlev_national.csv", col
 sf2_2010_sumlev_national_gq = read_csv("data-raw/sf2_2010_sumlev_national_gq.csv", col_types = "ccc")
 
 # Save data for use in the package
-use_data(sf2_2010_geo_cols, internal = FALSE, overwrite = TRUE)
+use_data(sf2_2010_geo_format, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_iterations, internal = FALSE, overwrite = TRUE)
-use_data(sf2_2010_segments, internal = FALSE, overwrite = TRUE)
+use_data(sf2_2010_fields, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_tables, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_geocomp, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_states, internal = FALSE, overwrite = TRUE)
