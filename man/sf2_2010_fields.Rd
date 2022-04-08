@@ -12,7 +12,8 @@ A data frame with 1575 rows and 6 columns:
   \item{FIELD}{Name of the variable.}
   \item{PARENT_FIELD}{Name of this variable's parent variable.}
   \item{TABLE}{Name of the logical table associated with this variable.}
-  \item{DESCRIPTION}{Description of the variable.}
+  \item{NAME}{Description of the variable.}
+  \item{DESCRIPTION}{Fully qualified name of the variable based on table hierarchy.}
 }
 }
 \source{

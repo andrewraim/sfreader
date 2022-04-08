@@ -6,6 +6,7 @@
 #' @import dplyr
 #' @import readr
 #' @import stringr
+#' @import methods
 #'
 #' @docType package
 #' @name sfreader

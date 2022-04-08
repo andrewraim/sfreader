@@ -34,10 +34,7 @@ print(sf2_2010_iterations, n = 10)
 print(sf2_2010_fields, n = 10)
 print(sf2_2010_states, n = 10)
 print(sf2_2010_tables, n = 10)
-print(sf2_2010_sumlev_state, n = 10)
-print(sf2_2010_sumlev_state_gq, n = 10)
-print(sf2_2010_sumlev_national, n = 10)
-print(sf2_2010_sumlev_national_gq, n = 10)
+print(sf2_2010_sumlev, n = 10)
 
 # ----- Example 1 -----
 # Let's try to read data for table PCT002 from one file.
@@ -107,7 +104,8 @@ col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Find the summary level that corresponds to counties
-sumlev = sf2_2010_sumlev_state %>%
+sumlev = sf2_2010_sumlev %>%
+	filter(TYPE == "STATE", GQ == FALSE) %>%
 	filter(DESCRIPTION == "State-County") %>%
 	pull(CODE)
 

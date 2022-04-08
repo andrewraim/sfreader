@@ -1,16 +1,26 @@
 Package: sfreader
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.2.0
-Author: Andrew Raim
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: An R Package to Read Census Summary Files
+Version: 0.3.0
+Authors@R: c(
+    person("Andrew M.", "Raim", email = "andrew.raim@gmail.com",
+        role = c("aut", "cre")),
+    person("James A.", "Livsey", email = "james.a.livsey@gmail.com",
+        role = c("aut")),
+    person("Kyle M.", "Irimata", email = "kyle.m.irimata@census.gov",
+        role = c("aut")))
+Description: Tools to aid in processing of summary files released by the Census
+    Bureau. At the time of this writing, the package focuses on summary file SF2
+    from the 2010 Decennal Census.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Depends: 
     methods,
+    dplyr,
+    stringr,
     readr,
     R (>= 2.10)
+
+

@@ -25,10 +25,7 @@ sf2_2010_geocomp = read_csv("data-raw/sf2_2010_geocomp.csv", col_types = "cc")
 sf2_2010_states = read_csv("data-raw/sf2_2010_states.csv", col_types = "cc")
 
 # Summary levels
-sf2_2010_sumlev_state = read_csv("data-raw/sf2_2010_sumlev_state.csv", col_types = "ccc")
-sf2_2010_sumlev_state_gq = read_csv("data-raw/sf2_2010_sumlev_state_gq.csv", col_types = "ccc")
-sf2_2010_sumlev_national = read_csv("data-raw/sf2_2010_sumlev_national.csv", col_types = "ccc")
-sf2_2010_sumlev_national_gq = read_csv("data-raw/sf2_2010_sumlev_national_gq.csv", col_types = "ccc")
+sf2_2010_sumlev = read_csv("data-raw/sf2_2010_sumlev.csv", col_types = "ccccl")
 
 # Save data for use in the package
 use_data(sf2_2010_geo_format, internal = FALSE, overwrite = TRUE)
@@ -37,10 +34,7 @@ use_data(sf2_2010_fields, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_tables, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_geocomp, internal = FALSE, overwrite = TRUE)
 use_data(sf2_2010_states, internal = FALSE, overwrite = TRUE)
-use_data(sf2_2010_sumlev_state, internal = FALSE, overwrite = TRUE)
-use_data(sf2_2010_sumlev_state_gq, internal = FALSE, overwrite = TRUE)
-use_data(sf2_2010_sumlev_national, internal = FALSE, overwrite = TRUE)
-use_data(sf2_2010_sumlev_national_gq, internal = FALSE, overwrite = TRUE)
+use_data(sf2_2010_sumlev, internal = FALSE, overwrite = TRUE)
 
 # TBD: Do we still need the following information from the Access database?
 # There is some additional information in here; e.g., descriptive table names,

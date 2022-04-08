@@ -4,6 +4,12 @@ SF2_2010 = function()
 	new("SF2_2010")
 }
 
+#' read_geo
+#'
+#' @description
+#' Read a geo file from the 2010 SF2 summary file into a \code{tibble}. See
+#' documentation for generic.
+#'
 #' @export
 setMethod("read_geo", c(sf = "SF2_2010", path = "character"), function(sf, path)
 {
@@ -109,7 +115,8 @@ setMethod("get_filename_patterns", c(sf = "SF2_2010"), function(sf)
 #'   \item{FIELD}{Name of the variable.}
 #'   \item{PARENT_FIELD}{Name of this variable's parent variable.}
 #'   \item{TABLE}{Name of the logical table associated with this variable.}
-#'   \item{DESCRIPTION}{Description of the variable.}
+#'   \item{NAME}{Description of the variable.}
+#'   \item{DESCRIPTION}{Fully qualified name of the variable based on table hierarchy.}
 #' }
 #'
 #' @details
@@ -160,44 +167,27 @@ setMethod("get_filename_patterns", c(sf = "SF2_2010"), function(sf)
 #' @source \url{https://www.census.gov/data/datasets/2010/dec/summary-file-2.html}
 "sf2_2010_tables"
 
-#' SF2 2010 Summary Levels for States
+#' SF2 2010 Summary Levels
 #'
 #' A dataset containing summary levels for state-specific files.
 #'
 #' \describe{
 #'   \item{CODE}{Code of the summary level.}
 #'   \item{PARENT_CODE}{Name of the table.}
-#'   \item{DESCRIPTION}{Description of the table.}
+#'   \item{DESCRIPTION}{Description of the summary level.}
+#'   \item{TYPE}{\code{NATIONAL} or \code{STATE}.}
+#'   \item{GQ}{Boolean; \code{TRUE} if level applies to GQs.}
 #' }
 #'
 #' @details
 #' Summary levels specify geography levels of the data. They follow a
 #' hierarchical structure, which can be accessed using the \code{PARENT_CODE}
 #' variable. A value of \code{NA} indicates the summary level is at the top
-#' level of the hierarchy.
-#'
-#' There are four varieties of summary level data provided:
-#' \itemize{
-#' \item \code{sf2_2010_sumlev_state}: for state-specific files.
-#' \item \code{sf2_2010_sumlev_state_gq}: for state-specific files, specific to
-#' PCO tables for group quarters.
-#' \item \code{sf2_2010_sumlev_national}: for national files.
-#' \item \code{sf2_2010_sumlev_national_gq}: for national files, specific to
-#' PCO tables for group quarters.
-#' }
+#' level of the hierarchy. Use the \code{TYPE} and \code{GQ} fields to select
+#' the correct hierarchy corresponding to state-specific or national files,
+#' and whether group quarters data are in use.
 #'
 #' @source \url{https://www.census.gov/data/datasets/2010/dec/summary-file-2.html}
 #' @name sf2_2010_sumlev
-NULL
+"sf2_2010_sumlev"
 
-#' @name sf2_2010_sumlev
-"sf2_2010_sumlev_state"
-
-#' @name sf2_2010_sumlev
-"sf2_2010_sumlev_state_gq"
-
-#' @name sf2_2010_sumlev
-"sf2_2010_sumlev_national"
-
-#' @name sf2_2010_sumlev
-"sf2_2010_sumlev_national_gq"
