@@ -34,14 +34,14 @@ geo_dat = read_geo(sf, geo_path)
 # through methods like "get_geo_cols(sf)", or is that overkill with the object
 # orientation? Also, will all (or most) summary files have similar helper
 # tables?
-print(sf2_2010_geo_cols, n = 10)
+print(sf2_2010_geo_format, n = 10)
 print(sf2_2010_iterations, n = 10)
 print(sf2_2010_fields, n = 10)
 print(sf2_2010_tables, n = 10)
 
 unique(sf2_2010_fields$NAME)
 
-e# ----- Example 1 -----
+# ----- Example 1 -----
 # Let's try to read data for table PCT002 from one file.
 
 # Identify segments for table PCT002
@@ -104,7 +104,7 @@ dat_joined$SUBMCD
 # Let's try to get all the county-level data for table PCT002 in our files.
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT002') %>%
 	pull(SEGMENT)
 
@@ -114,7 +114,7 @@ target_files = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Build up a big table from the individual table files.
@@ -156,7 +156,7 @@ View(dat_result)
 # County level
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT003') %>%
 	pull(SEGMENT)
 
@@ -179,7 +179,7 @@ target_file = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.
@@ -243,11 +243,11 @@ geo_dat = read_geo(sf, geo_path)
 # Find segments that relate to renters
 idx <-
 grep(pattern = "\\brent",
-	 x = sf2_2010_segments$DESCRIPTION,
+	 x = sf2_2010_fields$DESCRIPTION,
 	 ignore.case = TRUE,
 	 value = FALSE)
 
-sf2_2010_segments %>%
+sf2_2010_fields %>%
 	filter(row_number() %in% idx) %>%
 	View()
 # Looks like 18+ is not available. Only 15-24, 25-34, 35-44, ..., 85+
@@ -256,7 +256,7 @@ sf2_2010_segments %>%
 
 
 # Filter by "Total: Renter-occupied" and nothing after it ($)
-sf2_2010_segments %>%
+sf2_2010_fields %>%
 	filter(grepl("Total: Renter-occupied$", DESCRIPTION))
 # What is difference between these 3 tables?
 
@@ -265,13 +265,13 @@ sf2_2010_tables %>%
 	filter(NUMBER %in% c("HCT010")) %>%
 	View()
 
-sf2_2010_segments %>%
+sf2_2010_fields %>%
 	filter(TABLE == "HCT010") %>%
 	View()
 
 # I have Identified segments in table HCT010.
 # Set segments variable to filter data_files by
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'HCT010') %>%
 	pull(SEGMENT)
 
@@ -307,12 +307,12 @@ target_file = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.
 # the data file you read in will come with extra columns (maybe)
-#	can filter based on: sf2_2010_segments %>%
+#	can filter based on: sf2_2010_fields %>%
 #                                filter(TABLE == "HCT010") %>%
 #	                             View()
 dat = read_csv(target_file, col_names = col_defs$FIELD) %>%
