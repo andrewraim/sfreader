@@ -20,7 +20,7 @@ library(dplyr)
 # 2. Five numbers indicating characteristic iteration and segment
 # 3. Four digits indicating the year
 # 4. An extension indicating the type of summary file
-basedir = "~/data/ny2010.sf2/"
+basedir = "~/data/pr2010.sf2/"
 geo_path = list.files(basedir, pattern = '(\\w){2}geo(\\d){4}.sf2', full.names = TRUE)
 data_paths = list.files(basedir, pattern = '(\\w){2}(\\d){5}(\\d){4}.sf2', full.names = TRUE)
 
@@ -36,14 +36,16 @@ geo_dat = read_geo(sf, geo_path)
 # tables?
 print(sf2_2010_geo_cols, n = 10)
 print(sf2_2010_iterations, n = 10)
-print(sf2_2010_segments, n = 10)
+print(sf2_2010_fields, n = 10)
 print(sf2_2010_tables, n = 10)
 
-# ----- Example 1 -----
+unique(sf2_2010_fields$NAME)
+
+e# ----- Example 1 -----
 # Let's try to read data for table PCT002 from one file.
 
 # Identify segments for table PCT002
-segments = sf2_2010_segments %>%
+segments = sf2_2010_fields %>%
 	filter(TABLE == 'PCT002') %>%
 	pull(SEGMENT)
 
@@ -66,7 +68,7 @@ target_file = dat_files %>%
 
 # The data files do not have headers, so let's get the column definitions from
 # the sfreader package.
-col_defs = sf2_2010_segments %>%
+col_defs = sf2_2010_fields %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.
@@ -87,6 +89,16 @@ dat_joined = geo_dat %>%
 
 # View the result
 View(dat_joined)
+
+#### Puerto Rico Only
+# subminor civil division (SUBMCD)
+submcd <- dat_joined %>%
+	filter(!is.na(SUBMCD)) %>%
+	View()
+
+dat_joined$SUBMCD
+
+
 
 # ----- Example 2 -----
 # Let's try to get all the county-level data for table PCT002 in our files.
@@ -229,10 +241,15 @@ geo_dat = read_geo(sf, geo_path)
 ### Step 1: find the table number. We do this by looking at segments df.
 
 # Find segments that relate to renters
+idx <-
 grep(pattern = "\\brent",
 	 x = sf2_2010_segments$DESCRIPTION,
 	 ignore.case = TRUE,
-	 value = TRUE)
+	 value = FALSE)
+
+sf2_2010_segments %>%
+	filter(row_number() %in% idx) %>%
+	View()
 # Looks like 18+ is not available. Only 15-24, 25-34, 35-44, ..., 85+
 # Maybe those ages are only for the householder? Like head of household?
 # Let's just use: "Total: Renter-occupied"
@@ -243,6 +260,14 @@ sf2_2010_segments %>%
 	filter(grepl("Total: Renter-occupied$", DESCRIPTION))
 # What is difference between these 3 tables?
 
+
+sf2_2010_tables %>%
+	filter(NUMBER %in% c("HCT010")) %>%
+	View()
+
+sf2_2010_segments %>%
+	filter(TABLE == "HCT010") %>%
+	View()
 
 # I have Identified segments in table HCT010.
 # Set segments variable to filter data_files by
@@ -255,6 +280,8 @@ segments = sf2_2010_segments %>%
 geo_dat %>%
 	select(COUNTY, TRACT, BLKGRP, BLOCK) %>%
 	summarise_all(n_distinct)
+
+table(geo_dat$SUMLEV)
 # Looks like TRACT is lowest
 # I'm not sure where this actually gets used...
 # Maybe the data will exist at all levels of geography in the target files
@@ -284,7 +311,14 @@ col_defs = sf2_2010_segments %>%
 	filter(SEGMENT %in% segments)
 
 # Load the data file and apply the header.
-dat = read_csv(target_file, col_names = col_defs$FIELD)
+# the data file you read in will come with extra columns (maybe)
+#	can filter based on: sf2_2010_segments %>%
+#                                filter(TABLE == "HCT010") %>%
+#	                             View()
+dat = read_csv(target_file, col_names = col_defs$FIELD) %>%
+	select(1:5, HCT0100008)
+
+View(dat)
 
 # Join the data file to the geo file for information about the geography of
 # the records. On the last line, "everything" is a placeholder in tidyselect
@@ -294,13 +328,11 @@ dat = read_csv(target_file, col_names = col_defs$FIELD)
 # always seems to be set to 100.
 
 
-##################### STOPPED HERE ######################
-
 dat_joined = geo_dat %>%
 	select(-CHARITER) %>%
 	inner_join(dat, c("FILEID" = "FILEID", "STUSAB" = "STUSAB", "LOGRECNO" = "LOGRECNO")) %>%
 	inner_join(sf2_2010_iterations, c("CHARITER" = "CODE")) %>%
-	select(LOGRECNO, HCT0020001, everything())
+	select(LOGRECNO, HCT0100008, everything())
 
 # View the result
 View(dat_joined)
