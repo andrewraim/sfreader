@@ -1,0 +1,146 @@
+CODE,PARENT_CODE,DESCRIPTION,TYPE,GQ
+010,NA,"United States",NATIONAL,TRUE
+020,NA,"Region",NATIONAL,TRUE
+030,NA,"Division",NATIONAL,TRUE
+040,NA,"State",NATIONAL,TRUE
+050,040,"State-County",NATIONAL,TRUE
+500,040,"State-Congressional District",NATIONAL,TRUE
+610,040,"State-State Legislative District (Upper Chamber)",NATIONAL,TRUE
+620,040,"State-State Legislative District (Lower Chamber)",NATIONAL,TRUE
+310,NA,"Metropolitan Statistical Area/Micropolitan Statistical Area",NATIONAL,TRUE
+311,310,"Metropolitan Statistical Area/Micropolitan Statistical Area-State",NATIONAL,TRUE
+313,311,"Metropolitan Statistical Area/Micropolitan Statistical Area-State-County",NATIONAL,TRUE
+314,310,"Metropolitan Statistical Area-Metropolitan Division",NATIONAL,TRUE
+315,314,"Metropolitan Statistical Area-Metropolitan Division-State",NATIONAL,TRUE
+316,315,"Metropolitan Statistical Area-Metropolitan Division-State-County",NATIONAL,TRUE
+330,NA,"Combined Statistical Area",NATIONAL,TRUE
+331,330,"Combined Statistical Area-State",NATIONAL,TRUE
+332,330,"Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area",NATIONAL,TRUE
+333,332,"Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area-State",NATIONAL,TRUE
+010,NA,"United States",NATIONAL,FALSE
+020,NA,"Region",NATIONAL,FALSE
+030,NA,"Division",NATIONAL,FALSE
+040,NA,"State",NATIONAL,FALSE
+050,040,"State-County",NATIONAL,FALSE
+060,050,"State-County-County Subdivision",NATIONAL,FALSE
+070,060,"State-County-County Subdivision-Place/Remainder",NATIONAL,FALSE
+160,040,"State-Place",NATIONAL,FALSE
+155,160,"State-Place-County",NATIONAL,FALSE
+170,040,"State-Consolidated City",NATIONAL,FALSE
+172,170,"State-Consolidated City-Place Within Consolidated City",NATIONAL,FALSE
+500,040,"State-Congressional District",NATIONAL,FALSE
+610,040,"State-State Legislative District (Upper Chamber)",NATIONAL,FALSE
+620,040,"State-State Legislative District (Lower Chamber)",NATIONAL,FALSE
+250,NA,"American Indian Area/Alaska Native Area/Hawaiian Home Land",NATIONAL,FALSE
+260,250,"American Indian Area/Alaska Native Area/Hawaiian Home Land-State",NATIONAL,FALSE
+270,260,"American Indian Area/Alaska Native Area/Hawaiian Home Land-State-County",NATIONAL,FALSE
+271,270,"American Indian Area/Alaska Native Area/Hawaiian Home Land-State-County-County Subdivision",NATIONAL,FALSE
+273,271,"American Indian Area/Alaska Native Area/Hawaiian Home Land-State-County-County Subdivision-Place/ Remainder",NATIONAL,FALSE
+269,260,"American Indian Area/Alaska Native Area/Hawaiian Home Land-State-Place/Remainder",NATIONAL,FALSE
+252,250,"American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)",NATIONAL,FALSE
+262,252,"American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-State",NATIONAL,FALSE
+272,262,"American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-State-County",NATIONAL,FALSE
+275,272,"American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-State-County-County Subdivision",NATIONAL,FALSE
+276,275,"American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-State-County-County Subdivision-Place/Remainder",NATIONAL,FALSE
+254,250,"American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land",NATIONAL,FALSE
+264,254,"American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-State",NATIONAL,FALSE
+274,264,"American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-State-County",NATIONAL,FALSE
+277,274,"American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-State-County-County Subdivision",NATIONAL,FALSE
+278,277,"American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-State-County-County Subdivision-Place/Remainder",NATIONAL,FALSE
+256,250,"American Indian Area-Tribal Census Tract",NATIONAL,FALSE
+291,256,"American Indian Area (Reservation Only)-Tribal Census Tract",NATIONAL,FALSE
+292,256,"American Indian Area (Off-Reservation Trust Land Only)-Tribal Census Tract",NATIONAL,FALSE
+251,250,"American Indian Area-Tribal Subdivision/Remainder",NATIONAL,FALSE
+253,251,"American Indian Area (Reservation or Statistical Entity Only)-Tribal Subdivision/Remainder",NATIONAL,FALSE
+255,251,"American Indian Area (Off-Reservation Trust Land Only)-Tribal Subdivision/Remainder",NATIONAL,FALSE
+257,251,"American Indian Area-Tribal Subdivision/Remainder-Tribal Census Tract",NATIONAL,FALSE
+290,251,"American Indian Area-Tribal Subdivision/Remainder-State",NATIONAL,FALSE
+230,NA,"State-Alaska Native Regional Corporation",NATIONAL,FALSE
+310,NA,"Metropolitan Statistical Area/Micropolitan Statistical Area",NATIONAL,FALSE
+311,310,"Metropolitan Statistical Area/Micropolitan Statistical Area-State",NATIONAL,FALSE
+312,311,"Metropolitan Statistical Area/Micropolitan Statistical Area-State-Principal City",NATIONAL,FALSE
+313,311,"Metropolitan Statistical Area/Micropolitan Statistical Area-State-County",NATIONAL,FALSE
+314,310,"Metropolitan Statistical Area-Metropolitan Division",NATIONAL,FALSE
+315,314,"Metropolitan Statistical Area-Metropolitan Division-State",NATIONAL,FALSE
+316,315,"Metropolitan Statistical Area-Metropolitan Division-State-County",NATIONAL,FALSE
+330,NA,"Combined Statistical Area",NATIONAL,FALSE
+331,330,"Combined Statistical Area-State",NATIONAL,FALSE
+332,330,"Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area",NATIONAL,FALSE
+333,332,"Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area-State",NATIONAL,FALSE
+350,NA,"New England City and Town Area",NATIONAL,FALSE
+351,350,"New England City and Town Area-State",NATIONAL,FALSE
+352,351,"New England City and Town Area-State-Principal City",NATIONAL,FALSE
+353,351,"New England City and Town Area-State-County",NATIONAL,FALSE
+354,353,"New England City and Town Area-State-County-County Subdivision",NATIONAL,FALSE
+355,350,"New England City and Town Area (NECTA)-NECTA Division",NATIONAL,FALSE
+356,355,"New England City and Town Area (NECTA)-NECTA Division-State",NATIONAL,FALSE
+357,356,"New England City and Town Area (NECTA)-NECTA Division-State-County",NATIONAL,FALSE
+358,357,"New England City and Town Area (NECTA)-NECTA Division-State-County-County Subdivision",NATIONAL,FALSE
+335,NA,"Combined New England City and Town Area",NATIONAL,FALSE
+336,335,"Combined New England City and Town Area-State",NATIONAL,FALSE
+337,335,"Combined New England City and Town Area-New England City and Town Area",NATIONAL,FALSE
+338,337,"Combined New England City and Town Area-New England City and Town Area-State",NATIONAL,FALSE
+860,NA,"5-Digit ZIP Code Tabulation Area",NATIONAL,FALSE
+040,NA,"State",STATE,TRUE
+050,040,"State-County",STATE,TRUE
+320,040,"State-Metropolitan Statistical Area/Micropolitan Statistical Area",STATE,TRUE
+322,320,"State-Metropolitan Statistical Area/Micropolitan Statistical Area-County",STATE,TRUE
+323,320,"State-Metropolitan Statistical Area-Metropolitan Division",STATE,TRUE
+324,323,"State-Metropolitan Statistical Area-Metropolitan Division-County",STATE,TRUE
+340,040,"State-Combined Statistical Area",STATE,TRUE
+341,340,"State-Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area",STATE,TRUE
+500,040,"State-Congressional District",STATE,TRUE
+610,040,"State-State Legislative District (Upper Chamber)",STATE,TRUE
+620,040,"State-State Legislative District (Lower Chamber)",STATE,TRUE
+040,NA,"State",STATE,FALSE
+050,040,"State-County",STATE,FALSE
+060,050,"State-County-County Subdivision",STATE,FALSE
+070,060,"State-County-County Subdivision-Place/Remainder",STATE,FALSE
+080,070,"State-County-County Subdivision-Place/Remainder-Census Tract",STATE,FALSE
+067,060,"State-County-County Subdivision-Subminor Civil Division",STATE,FALSE
+140,050,"State-County-Census Tract",STATE,FALSE
+144,140,"State-County-Census Tract-American Indian Area/Alaska Native Area/Hawaiian Home Land",STATE,FALSE
+160,040,"State-Place",STATE,FALSE
+155,160,"State-Place-County",STATE,FALSE
+158,155,"State-Place-County-Census Tract",STATE,FALSE
+170,040,"State-Consolidated City",STATE,FALSE
+172,170,"State-Consolidated City-Place Within Consolidated City",STATE,FALSE
+280,040,"State-American Indian Area/Alaska Native Area/Hawaiian Home Land",STATE,FALSE
+282,280,"State-American Indian Area/Alaska Native Area/Hawaiian Home Land-County",STATE,FALSE
+261,282,"State-American Indian Area/Alaska Native Area/Hawaiian Home Land-County-County Subdivision",STATE,FALSE
+263,261,"State-American Indian Area/Alaska Native Area/Hawaiian Home Land-County-County Subdivision-Place/Remainder",STATE,FALSE
+283,280,"State-American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)",STATE,FALSE
+285,283,"State-American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-County",STATE,FALSE
+265,285,"State-American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-County-County Subdivision",STATE,FALSE
+266,286,"State-American Indian Area/Alaska Native Area (Reservation or Statistical Entity Only)-County-County Subdvision-Place/Remainder",STATE,FALSE
+286,280,"State-American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land",STATE,FALSE
+288,286,"State-American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-County",STATE,FALSE
+267,288,"State-American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-County-County Subdivision",STATE,FALSE
+268,267,"State-American Indian Area (Off-Reservation Trust Land Only)/Hawaiian Home Land-County-County Subdivision-Place/Remainder",STATE,FALSE
+281,280,"State-American Indian Area-Tribal Subdivision/Remainder",STATE,FALSE
+284,281,"State-American Indian Area (Reservation or Statistical Entity Only)-Tribal Subdivision/Remainder",STATE,FALSE
+287,281,"State-American Indian Area (Off-Reservation Trust Land Only)-Tribal Subdivision/Remainder",STATE,FALSE
+230,040,"State-Alaska Native Regional Corporation",STATE,FALSE
+320,040,"State-Metropolitan Statistical Area/Micropolitan Statistical Area",STATE,FALSE
+321,320,"State-Metropolitan Statistical Area/Micropolitan Statistical Area-Principal City",STATE,FALSE
+322,320,"State-Metropolitan Statistical Area/Micropolitan Statistical Area-County",STATE,FALSE
+323,320,"State-Metropolitan Statistical Area-Metropolitan Division",STATE,FALSE
+324,323,"State-Metropolitan Statistical Area-Metropolitan Division-County",STATE,FALSE
+340,040,"State-Combined Statistical Area",STATE,FALSE
+341,340,"State-Combined Statistical Area-Metropolitan Statistical Area/Micropolitan Statistical Area",STATE,FALSE
+360,040,"State-New England City and Town Area",STATE,FALSE
+361,360,"State-New England City and Town Area-Principal City",STATE,FALSE
+362,360,"State-New England City and Town Area-County",STATE,FALSE
+363,362,"State-New England City and Town Area-County-CountySubdivision",STATE,FALSE
+364,360,"State-New England City and Town Area (NECTA)-NECTA Division",STATE,FALSE
+365,364,"State-New England City and Town Area (NECTA)-NECTA Division-County",STATE,FALSE
+366,365,"State-New England City and Town Area (NECTA)-NECTA Division-County-County Subdivision",STATE,FALSE
+345,040,"State-Combined New England City and Town Area",STATE,FALSE
+346,345,"State-Combined New England City and Town Area-New England City and Town Area",STATE,FALSE
+500,040,"State-Congressional District",STATE,FALSE
+610,040,"State-State Legislative District (Upper Chamber)",STATE,FALSE
+620,040,"State-State Legislative District (Lower Chamber)",STATE,FALSE
+871,040,"State-5-Digit ZIP Code Tabulation Area",STATE,FALSE
+950,040,"State-School District (Elementary)/Remainder",STATE,FALSE
+960,040,"State-School District (Secondary)/Remainder",STATE,FALSE
+970,040,"State-School District (Unified)/Remainder",STATE,FALSE
