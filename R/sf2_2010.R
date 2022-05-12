@@ -1,3 +1,8 @@
+# Declare global variables within package to pass CRAN check
+globalVariables("sf2_2010_states")
+globalVariables("sf2_2010_geo_format")
+globalVariables(c("ABBREV", "NAME"))
+
 #' @export
 SF2_2010 = function()
 {
@@ -5,6 +10,9 @@ SF2_2010 = function()
 }
 
 #' read_geo
+#'
+#' @param sf a summary file object.
+#' @param path path to a geo file corresponding to \code{sf}.
 #'
 #' @description
 #' Read a geo file from the 2010 SF2 summary file into a \code{tibble}. See
@@ -190,4 +198,3 @@ setMethod("get_filename_patterns", c(sf = "SF2_2010"), function(sf)
 #' @source \url{https://www.census.gov/data/datasets/2010/dec/summary-file-2.html}
 #' @name sf2_2010_sumlev
 "sf2_2010_sumlev"
-

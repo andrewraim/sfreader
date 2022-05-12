@@ -5,5 +5,5 @@
 \alias{sfreader}
 \title{sfreader: Census Summary File Reader}
 \description{
-An R Package to read Census summary files.
+An R Package to read U.S. Census Bureau summary files.
 }

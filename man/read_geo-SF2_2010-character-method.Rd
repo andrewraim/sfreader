@@ -6,6 +6,11 @@
 \usage{
 \S4method{read_geo}{SF2_2010,character}(sf, path)
 }
+\arguments{
+\item{sf}{a summary file object.}
+
+\item{path}{path to a geo file corresponding to \code{sf}.}
+}
 \description{
 Read a geo file from the 2010 SF2 summary file into a \code{tibble}. See
 documentation for generic.
